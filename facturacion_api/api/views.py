@@ -7,7 +7,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from .models import Cliente, Categoria, Producto
+from .models import Cliente, Categoria, Factura, Producto
 
 class ClienteView(View):
     @method_decorator(csrf_exempt)
@@ -173,3 +173,65 @@ class ProductoView(View):
         else:
             datos={'message':'Datos no encontrados'}
         return JsonResponse(datos)
+    
+    def delete(self, request,id):
+        productoId = list(Producto.objects.filter(id=id).values())
+        if len(productoId) > 0:
+            Producto.objects.filter(id=id).delete()
+            datos={'message':'Success'}
+        else:
+            datos={'message':'Producto no encontrado'}
+        return JsonResponse(datos)
+        
+
+class FacturaView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request , *args, **kwargs):  
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request,id=0):
+        if(id>0):
+            facturaid = list(Factura.objects.filter(id=id).values())
+            if len(facturaid) > 0:
+                datos={'message':'Success','Productos':facturaid}
+            else:
+                datos={'message':'Producto no encontrado'}
+            return JsonResponse(datos)
+        else:
+            facturas = list(Factura.objects.values())
+            if len(facturas):
+                datos={'message':'Success','Productos':facturas}
+            else:
+                datos={'message':'Datos no encontrados'}
+            return JsonResponse(datos)
+
+    def post(self, request):
+        jd=json.loads(request.body)
+        Factura.objects.create(clienteId_id=jd['clienteId_id'],
+                            fechaFactura=jd['fechaFactura'],
+                            )
+        datos={'message':'success'} 
+        return JsonResponse(datos)
+
+    def put(self, request,id):
+        jd=json.loads(request.body)
+        facturaId = list(Factura.objects.filter(id=id).values())
+        if len(facturaId) > 0:
+            facturaId = Factura.objects.get(id=id)
+            facturaId.clienteId_id=jd['clienteId_id']
+            facturaId.fechaFactura=jd['fechaFactura']
+            facturaId.save()
+            datos={'message':'Success'}
+        else:
+            datos={'message':'Datos no encontrados'}
+        return JsonResponse(datos)
+
+    def delete(self, request,id):
+        facturaId = list(Factura.objects.filter(id=id).values())
+        if len(facturaId) > 0:
+            Factura.objects.filter(id=id).delete()
+            datos={'message':'Success'}
+        else:
+            datos={'message':'Factura no encontrada'}
+        return JsonResponse(datos)
+    

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CategoriaView, ClienteView, ProductoView
+from .views import CategoriaView, ClienteView, ProductoView, FacturaView
 
 urlpatterns = [
     #cliente 
@@ -13,5 +13,11 @@ urlpatterns = [
 
     # producto
     path('producto', ProductoView.as_view(),name='producto_lista'),
-    path('producto/<int:id>',ProductoView.as_view(),name='producto_procesos')
+    path('producto/<int:id>',ProductoView.as_view(),name='producto_procesos'),
+
+    # factura
+    path('factura', FacturaView.as_view(),name='factura_lista'),
+    path('factura/<int:id>',FacturaView.as_view(),name='factura_procesos'),
+
+    
 ]
