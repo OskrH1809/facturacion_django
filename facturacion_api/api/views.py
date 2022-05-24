@@ -7,7 +7,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from .models import Cliente, Categoria, Factura, Producto
+from .models import Cliente, Categoria, Detalle, Factura, Producto
 
 class ClienteView(View):
     @method_decorator(csrf_exempt)
@@ -233,5 +233,61 @@ class FacturaView(View):
             datos={'message':'Success'}
         else:
             datos={'message':'Factura no encontrada'}
+        return JsonResponse(datos)
+    
+
+class DetalleView(View):
+     @method_decorator(csrf_exempt)
+     def dispatch(self, request , *args, **kwargs):  
+        return super().dispatch(request, *args, **kwargs)
+
+     def get(self, request,id=0):
+        if(id>0):
+            detalleId = list(Detalle.objects.filter(id=id).values())
+            if len(detalleId) > 0:
+                datos={'message':'Success','Productos':detalleId}
+            else:
+                datos={'message':'Detalles no encontrados'}
+            return JsonResponse(datos)
+        else:
+            detalle = list(Detalle.objects.values())
+            if len(detalle):
+                datos={'message':'Success','Detalles':detalle}
+            else:
+                datos={'message':'Datos no encontrados'}
+            return JsonResponse(datos)
+
+     def post(self, request):
+        jd=json.loads(request.body)
+        Detalle.objects.create(facturaId_id=jd['facturaId_id'],
+                            productoId_id=jd['productoId_id'],
+                            cantidad=jd['cantidad'],
+                            precio=jd['precio'],
+                            )
+        datos={'message':'success'} 
+        return JsonResponse(datos)
+    
+     def put(self, request,id):
+        jd=json.loads(request.body)
+        detalleId = list(Detalle.objects.filter(id=id).values())
+        if len(detalleId) > 0:
+            detalleId = Detalle.objects.get(id=id)
+            detalleId.facturaId_id=jd['facturaId_id']
+            detalleId.productoId_id=jd['productoId_id']
+            detalleId.cantidad=jd['cantidad']
+            detalleId.precio=jd['precio']
+            detalleId.save()
+            datos={'message':'Success'}
+        else:
+            datos={'message':'Datos no encontrados'}
+        return JsonResponse(datos)
+     
+     def delete(self, request,id):
+        detalleId = list(Detalle.objects.filter(id=id).values())
+        if len(detalleId) > 0:
+            Detalle.objects.filter(id=id).delete()
+            datos={'message':'Success'}
+        else:
+            datos={'message':'Detalles no encontrados'}
         return JsonResponse(datos)
     
