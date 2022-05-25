@@ -18,18 +18,18 @@ class Producto(models.Model):
     nombreProducto = models.CharField(max_length=50)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
-    categoriaId = models.ForeignKey(Categoria,null=True,on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria,null=True,on_delete=models.CASCADE)
     
     
 
 
 class Factura(models.Model):
-    clienteId = models.ForeignKey(Cliente,null=True,on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente,null=True,on_delete=models.CASCADE)
     fechaFactura = models.DateField()
 
 class Detalle(models.Model):
-    facturaId = models.ForeignKey(Factura, null=True, on_delete=models.CASCADE)
-    productoId = models.ForeignKey(Producto, null=True,on_delete=models.CASCADE)
+    factura = models.ForeignKey(Factura, null=True, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, null=True,on_delete=models.CASCADE)
     cantidad = models.IntegerField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     

@@ -154,7 +154,7 @@ class ProductoView(View):
         Producto.objects.create(nombreProducto=jd['nombreProducto'],
                             precio=jd['precio'],
                             stock=jd['stock'],
-                            categoriaId_id=jd['categoriaId_id'],
+                            categoria_id=jd['categoria_id'],
                             )
         datos={'message':'success'} 
         return JsonResponse(datos)
@@ -167,7 +167,7 @@ class ProductoView(View):
             productoId.nombreProducto=jd['nombreProducto']
             productoId.precio=jd['precio']
             productoId.stock=jd['stock']
-            productoId.categoriaId_id=jd['categoriaId_id']
+            productoId.categoria_id=jd['categoria_id']
             productoId.save()
             datos={'message':'Success'}
         else:
@@ -207,7 +207,7 @@ class FacturaView(View):
 
     def post(self, request):
         jd=json.loads(request.body)
-        Factura.objects.create(clienteId_id=jd['clienteId_id'],
+        Factura.objects.create(cliente_id=jd['cliente_id'],
                             fechaFactura=jd['fechaFactura'],
                             )
         datos={'message':'success'} 
@@ -218,7 +218,7 @@ class FacturaView(View):
         facturaId = list(Factura.objects.filter(id=id).values())
         if len(facturaId) > 0:
             facturaId = Factura.objects.get(id=id)
-            facturaId.clienteId_id=jd['clienteId_id']
+            facturaId.cliente_id=jd['cliente_id']
             facturaId.fechaFactura=jd['fechaFactura']
             facturaId.save()
             datos={'message':'Success'}
@@ -259,8 +259,8 @@ class DetalleView(View):
 
      def post(self, request):
         jd=json.loads(request.body)
-        Detalle.objects.create(facturaId_id=jd['facturaId_id'],
-                            productoId_id=jd['productoId_id'],
+        Detalle.objects.create(factura_id=jd['factura_id'],
+                            producto_id=jd['producto_id'],
                             cantidad=jd['cantidad'],
                             precio=jd['precio'],
                             )
@@ -272,8 +272,8 @@ class DetalleView(View):
         detalleId = list(Detalle.objects.filter(id=id).values())
         if len(detalleId) > 0:
             detalleId = Detalle.objects.get(id=id)
-            detalleId.facturaId_id=jd['facturaId_id']
-            detalleId.productoId_id=jd['productoId_id']
+            detalleId.factura_id=jd['factura_id']
+            detalleId.producto_id=jd['producto_id']
             detalleId.cantidad=jd['cantidad']
             detalleId.precio=jd['precio']
             detalleId.save()
