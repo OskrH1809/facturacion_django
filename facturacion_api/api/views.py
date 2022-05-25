@@ -90,7 +90,7 @@ class CategoriaView(View):
         else:
             Categorias= list(Categoria.objects.values())
             if len(Categorias):
-                datos={'message':'Success','Clientes':Categorias}
+                datos={'message':'Success','categoria':Categorias}
             else:
                 datos={'message':'Datos no encontrados'}
             return JsonResponse(datos)
@@ -136,6 +136,7 @@ class ProductoView(View):
     def get(self, request,id=0):
         if(id>0):
             productoId = list(Producto.objects.filter(id=id).values())
+            categoriaId =list(Categoria.objects.all())
             if len(productoId) > 0:
                 datos={'message':'Success','Productos':productoId}
             else:
