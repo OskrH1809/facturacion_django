@@ -1,8 +1,12 @@
+from hashlib import new
 import json
+from select import select
 from typing import List
+from urllib import response
 from django import views
 from django.http import JsonResponse
 from django.views import View
+from django.core import serializers
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -136,16 +140,21 @@ class ProductoView(View):
     def get(self, request,id=0):
         if(id>0):
             productoId = list(Producto.objects.filter(id=id).values())
-            categoriaId =list(Categoria.objects.all())
+            
             if len(productoId) > 0:
                 datos={'message':'Success','Productos':productoId}
             else:
                 datos={'message':'Producto no encontrado'}
             return JsonResponse(datos)
         else:
-            productos= list(Producto.objects.values())
-            if len(productos):
-                datos={'message':'Success','Productos':productos}
+          
+
+            # productos= list(Producto.objects.all().values())
+            
+            productox = list(Producto.objects.values('id','nombreProducto', 'precio', 'stock','categoria__nombreCategoria'))
+                        
+            if len(productox):
+                datos={'message':'Success','Productos':productox}
             else:
                 datos={'message':'Datos no encontrados'}
             return JsonResponse(datos)
@@ -196,23 +205,24 @@ class FacturaView(View):
             if len(facturaid) > 0:
                 datos={'message':'Success','Productos':facturaid}
             else:
-                datos={'message':'Producto no encontrado'}
+                datos={'message':'factura no encontrada'}
             return JsonResponse(datos)
         else:
-            facturas = list(Factura.objects.values())
+            facturas = list(Factura.objects.values('id','cliente_id','fechaFactura','cliente__nombreCliente'))
             if len(facturas):
-                datos={'message':'Success','Productos':facturas}
+                datos={'message':'Success','facturas':facturas}
             else:
                 datos={'message':'Datos no encontrados'}
             return JsonResponse(datos)
 
     def post(self, request):
         jd=json.loads(request.body)
-        Factura.objects.create(cliente_id=jd['cliente_id'],
-                            fechaFactura=jd['fechaFactura'],
+        newFactura = Factura.objects.create(cliente_id=jd['cliente_id'],
                             )
-        datos={'message':'success'} 
-        return JsonResponse(datos)
+        newFactura.save()
+       
+        datos={'message': 'success','id':newFactura.pk} 
+        return  JsonResponse(datos)
 
     def put(self, request,id):
         jd=json.loads(request.body)
@@ -251,7 +261,7 @@ class DetalleView(View):
                 datos={'message':'Detalles no encontrados'}
             return JsonResponse(datos)
         else:
-            detalle = list(Detalle.objects.values())
+            detalle = list(Detalle.objects.values('id','factura_id','producto_id','cantidad','precio','producto__nombreProducto'))
             if len(detalle):
                 datos={'message':'Success','Detalles':detalle}
             else:

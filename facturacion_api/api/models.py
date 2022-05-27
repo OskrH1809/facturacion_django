@@ -25,7 +25,7 @@ class Producto(models.Model):
 
 class Factura(models.Model):
     cliente = models.ForeignKey(Cliente,null=True,on_delete=models.CASCADE)
-    fechaFactura = models.DateField()
+    fechaFactura = models.DateField( auto_now_add=True)
 
 class Detalle(models.Model):
     factura = models.ForeignKey(Factura, null=True, on_delete=models.CASCADE)
